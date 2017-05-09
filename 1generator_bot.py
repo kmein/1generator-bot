@@ -15,16 +15,6 @@ def handle(repls, msg):
         logging.info("Message is a {}, namely \"{}\"".format(content_type, text))
         logging.info("Sending response \"{}\" in chat {} to ID {}".format(reply, chat_id, message_id))
         bot.sendMessage(chat_id, reply, reply_to_message_id=message_id)
-    elif content_type == "photo":
-        logging.info("Message is a {}, namely {}".format(content_type, photo))
-        logging.info("Sending reversed chat {} to ID {}".format(chat_id, message_id))
-        bot.sendPhoto(
-            chat_id,
-            (img_file_path, open(img_file_path, "rb")),
-            caption=translate_with(repls, msg["caption"]) if "caption" in msg else None,
-            reply_to_message_id=message_id
-        )
-        logging.info("Done")
     else:
         logging.info("Done")
 

@@ -1,5 +1,6 @@
-import csv
+from functools import reduce
 from random import random
+import csv
 
 class Replacement:
 
@@ -31,18 +32,11 @@ def conditioned(probability: float) -> bool:
     return (1 - probability) <= random()
 
 def get_replacements(path: str) -> list:
-    replacements = []
-    with open(path, newline="") as csvfile:
-        vongreader = csv.reader(csvfile)
-        for row in vongreader:
-            replacements.append(Replacement.from_row(row))
-    return replacements
+    vongreader = csv.reader(open(path, newline=""))
+    return [Replacement.from_row(row) for row in vongreader]
 
 def translate_with(replacements: list, text: str) -> str:
-    result = text
-    for r in replacements:
-        result = r.apply(result)
-    return result
+    return reduce(lambda t, r: r.apply(t), replacements, text)
 
 if __name__ == "__main__":
     import sys
