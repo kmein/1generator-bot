@@ -1,6 +1,6 @@
 # 1generator-bot
 
-Hi i bims 1 generator.
+Hi i bims 1 generator vong telegram her.
 
 ## Setup
 
