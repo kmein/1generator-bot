@@ -3,6 +3,7 @@ import bcolors
 
 import logging
 import telepot
+from telepot.namedtuple import InlineQueryResultArticle, InputTextMessageContent
 
 from _1generator import translate_with, get_replacements
 
@@ -18,6 +19,25 @@ def handle(repls, msg):
     else:
         logging.info("Done")
 
+def handle_inline(repls, msg):
+    try:
+        query_id, _, query_string = telepot.glance(msg, flavor="inline_query")
+        reply = translate_with(repls, query_string)
+
+        logging.info("Message is query #{}, namely \"{}\"".format(query_id, query_string))
+
+        articles = [InlineQueryResultArticle(
+            id="1generator",
+            title=reply,
+            input_message_content=InputTextMessageContent(message_text=reply)
+            )]
+
+        bot.answerInlineQuery(query_id, articles)
+        logging.info("Proposing {}".format(reply))
+    except telepot.exception.TelegramError:
+        pass
+
+
 if __name__ == "__main__":
     logging.basicConfig(
         format="{}[%(levelname)s %(asctime)s]{} %(message)s".format(
@@ -30,4 +50,8 @@ if __name__ == "__main__":
     repls = get_replacements("vong.csv")
 
     bot = telepot.Bot(TOKEN)
-    bot.message_loop(lambda msg: handle(repls, msg), run_forever=True)
+    bot.message_loop({
+        "inline_query": lambda msg: handle_inline(repls, msg),
+        "chat": lambda msg: handle(repls, msg)
+        }, run_forever=True
+    )
