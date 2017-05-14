@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
+from _1generator import translate_with, get_replacements
+from telepot.loop import MessageLoop
+from telepot.namedtuple import InlineQueryResultArticle, InputTextMessageContent
 import bcolors
-
 import logging
 import telepot
-from telepot.namedtuple import InlineQueryResultArticle, InputTextMessageContent
-
-from _1generator import translate_with, get_replacements
 
 def handle(repls, msg):
     content_type, _, chat_id, _, message_id = telepot.glance(msg, long=True)
@@ -45,13 +44,12 @@ if __name__ == "__main__":
             bcolors.ENDC
         ), level=logging.INFO
     )
-    TOKEN = open("1generator.token").read().strip()
+    TOKEN = open("meerschweinchen.token").read().strip()
 
     repls = get_replacements("vong.csv")
 
     bot = telepot.Bot(TOKEN)
-    bot.message_loop({
+    MessageLoop(bot, {
         "inline_query": lambda msg: handle_inline(repls, msg),
         "chat": lambda msg: handle(repls, msg)
-        }, run_forever=True
-    )
+        }).run_forever()
